@@ -1,35 +1,64 @@
-# VGTW Demo: Visual Geometry Transformer in the Wild
+<div align="center">
 
-This repository contains the Gradio demo for **VGTW: Visual Geometry Transformer in the Wild**, a distractor-free 3D reconstruction demo built on a VGGT-style multi-view geometry backbone with LoRA adaptation and an additional predicted distractor/occlusion mask.
+# VGTW: Visual Geometry Transformer in the Wild
 
-Given one or more input images, the demo predicts:
+**Distractor-Free 3D Reconstruction from Unconstrained Images**
 
-- camera intrinsics and extrinsics;
-- depth maps and depth confidence;
-- point maps and point confidence;
-- a predicted distractor/occlusion mask;
-- a GLB point-cloud scene for interactive visualization.
+<a href="https://huggingface.co/pan7386/vgtw-lora/blob/main/vgtw_lora_fp32.pt">
+  <img src="https://img.shields.io/badge/%F0%9F%A4%97%20Checkpoint-vgtw--lora-blue" alt="VGTW LoRA Checkpoint">
+</a>
+<a href="https://github.com/facebookresearch/vggt">
+  <img src="https://img.shields.io/badge/Based%20on-VGGT-green" alt="Based on VGGT">
+</a>
 
-## Run the demo
+</div>
 
-```bash
-pip install -r requirements.txt
-python demo_gradio.py
-```
+## Overview
 
-The demo loads the local checkpoint by default:
+VGTW is a Gradio demo for distractor-free 3D reconstruction in the wild. It builds on a VGGT-style multi-view geometry backbone and adds LoRA adaptation plus a predicted distractor/occlusion mask.
+
+Given one or more input images, the demo estimates camera parameters, dense geometry, confidence maps, and a distractor-aware point filter, then exports an interactive GLB point-cloud scene.
+
+## Checkpoint
+
+The demo uses the following checkpoint by default:
+
+| Model | File | Download |
+|:--|:--|:--|
+| VGTW LoRA | `vgtw_lora_fp32.pt` | [Hugging Face](https://huggingface.co/pan7386/vgtw-lora/blob/main/vgtw_lora_fp32.pt) |
+
+Place the checkpoint in the repository root:
 
 ```text
 vgtw_lora_fp32.pt
 ```
 
-For backward compatibility, `demo_gradio.py` also accepts a local `model_lora_fp32.pt`. If neither local checkpoint is present, `demo_gradio.py` falls back to downloading:
+For backward compatibility, the demo also accepts a local `model_lora_fp32.pt`. If neither local checkpoint exists, it downloads `vgtw_lora_fp32.pt` from `pan7386/vgtw-lora` automatically.
 
-```text
-https://huggingface.co/pan7386/vgtw-lora/blob/main/vgtw_lora_fp32.pt
+## Installation
+
+```bash
+git clone https://github.com/Tianbo-Pan/VGTW.git
+cd VGTW
+pip install -r requirements.txt
 ```
 
-## Minimal code path
+## Run the Gradio Demo
+
+```bash
+python demo_gradio.py
+```
+
+The interface lets you:
+
+- upload image sequences or select built-in examples;
+- reconstruct a distractor-free point cloud;
+- switch between depth-based and pointmap-based visualization;
+- adjust confidence filtering;
+- optionally filter sky, black background, or white background;
+- view and download the exported GLB scene.
+
+## Minimal Usage
 
 ```python
 from vgtw.models.vgtw import VGTW
@@ -42,10 +71,10 @@ images = load_and_preprocess_images(["image1.jpg", "image2.jpg"])
 
 ## Acknowledgement
 
-This demo is based on the original VGGT codebase from Meta/Facebook Research:
+This demo is derived from the original VGGT codebase from Meta/Facebook Research:
 
 ```text
 https://github.com/facebookresearch/vggt
 ```
 
-Please also follow the original VGGT license and attribution requirements where applicable.
+Please follow the original VGGT license and attribution requirements where applicable.
