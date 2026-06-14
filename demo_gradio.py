@@ -10,7 +10,6 @@ import inspect
 import torch
 import numpy as np
 import gradio as gr
-import sys
 import shutil
 from datetime import datetime
 import glob
@@ -18,13 +17,11 @@ import gc
 import time
 from huggingface_hub import hf_hub_download
 
-sys.path.append("vggt/")
-
 from visual_util import predictions_to_glb
-from vggt.models.vgtw import vgtw
-from vggt.utils.load_fn import load_and_preprocess_images
-from vggt.utils.pose_enc import pose_encoding_to_extri_intri
-from vggt.utils.geometry import unproject_depth_map_to_point_map
+from vgtw.models.vgtw import VGTW
+from vgtw.utils.load_fn import load_and_preprocess_images
+from vgtw.utils.pose_enc import pose_encoding_to_extri_intri
+from vgtw.utils.geometry import unproject_depth_map_to_point_map
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -60,13 +57,16 @@ def clear_cuda_cache():
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
 
-print("Initializing and loading VGGT model...")
-# model = vgtw.from_pretrained("facebook/VGGT-1B")  # another way to load the model
+print("Initializing and loading VGTW model...")
+# model = VGTW.from_pretrained("pan7386/vgtw-lora")  # another way to load the model
 
-model = vgtw(lora_r=32, lora_alpha=16.0).to(device)
-local_ckpt_path = os.path.join(os.path.dirname(__file__), "model_lora_fp32.pt")
+model = VGTW(lora_r=32, lora_alpha=16.0).to(device)
+local_ckpt_path = os.path.join(os.path.dirname(__file__), "vgtw_lora_fp32.pt")
+legacy_ckpt_path = os.path.join(os.path.dirname(__file__), "model_lora_fp32.pt")
 if os.path.exists(local_ckpt_path):
     merged_ckpt_path = local_ckpt_path
+elif os.path.exists(legacy_ckpt_path):
+    merged_ckpt_path = legacy_ckpt_path
 else:
     model_repo_id = os.getenv("MODEL_REPO_ID", "pan7386/vgtw-lora")
     model_filename = os.getenv("MODEL_FILENAME", "model_lora_fp32.pt")
@@ -108,7 +108,7 @@ def stack_lora_predictions(raw_predictions):
 
 def run_model(target_dir, model) -> dict:
     """
-    Run the VGGT model on images in the 'target_dir/images' folder and return predictions.
+    Run the VGTW model on images in the 'target_dir/images' folder and return predictions.
     """
     print(f"Processing images from {target_dir}")
 
@@ -482,7 +482,7 @@ with gr.Blocks(**blocks_kwargs) as demo:
         """
     <h1> Visual Geometry Transformer in the Wild: Distractor-Free 3D Reconstruction</h1>
     <p>
-    <a href="https://github.com/facebookresearch/vggt">🐙 GitHub Repository</a> |
+    <a href="https://github.com/Tianbo-Pan/VGTW">🐙 GitHub Repository</a> |
     <a href="#">Project Page</a>
     </p>
 

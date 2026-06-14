@@ -144,3 +144,9 @@ dmypy.json
 **/tmp/
 **/outputs/skyseg.onnx
 skyseg.onnx
+# VGTW demo local/generated artifacts
+demo_output/
+.gradio/
+.vscode/
+*_lora_fp32.pt
+model_lora_fp32.pt

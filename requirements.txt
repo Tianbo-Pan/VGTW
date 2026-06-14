@@ -5,3 +5,15 @@ Pillow
 huggingface_hub
 einops
 safetensors
+gradio==5.17.1
+viser==0.2.23
+tqdm
+hydra-core
+omegaconf
+opencv-python
+scipy
+onnxruntime
+requests
+trimesh
+matplotlib
+seaborn

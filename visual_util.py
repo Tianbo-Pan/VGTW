@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 import trimesh
-import gradio as gr
 import numpy as np
 import matplotlib
 from scipy.spatial.transform import Rotation
@@ -27,7 +26,7 @@ def predictions_to_glb(
     prediction_mode="Predicted Pointmap",
 ) -> trimesh.Scene:
     """
-    Converts VGGT predictions to a 3D scene represented as a GLB file.
+    Converts VGTW predictions to a 3D scene represented as a GLB file.
 
     Args:
         predictions (dict): Dictionary containing model predictions with keys:
@@ -78,6 +77,15 @@ def predictions_to_glb(
         print("Using Depthmap and Camera Branch")
         pred_world_points = predictions["world_points_from_depth"]
         pred_world_points_conf = predictions.get("depth_conf", np.ones_like(pred_world_points[..., 0]))
+
+    distractor_valid_mask = None
+    if "distractor_valid_mask" in predictions:
+        distractor_valid_mask = predictions["distractor_valid_mask"]
+    elif "depth_mask_binary" in predictions:
+        depth_mask = predictions["depth_mask_binary"]
+        if depth_mask.ndim == 4 and depth_mask.shape[-1] == 1:
+            depth_mask = depth_mask[..., 0]
+        distractor_valid_mask = 1.0 - (depth_mask > 0.5).astype(np.float32)
 
     # Get images from predictions
     images = predictions["images"]
@@ -137,6 +145,8 @@ def predictions_to_glb(
     if selected_frame_idx is not None:
         pred_world_points = pred_world_points[selected_frame_idx][None]
         pred_world_points_conf = pred_world_points_conf[selected_frame_idx][None]
+        if distractor_valid_mask is not None:
+            distractor_valid_mask = distractor_valid_mask[selected_frame_idx][None]
         images = images[selected_frame_idx][None]
         camera_matrices = camera_matrices[selected_frame_idx][None]
 
@@ -156,6 +166,14 @@ def predictions_to_glb(
         conf_threshold = np.percentile(conf, conf_thres)
 
     conf_mask = (conf >= conf_threshold) & (conf > 1e-5)
+    if distractor_valid_mask is not None:
+        distractor_keep = distractor_valid_mask.reshape(-1) > 0.5
+        if distractor_keep.shape[0] == conf_mask.shape[0]:
+            conf_mask = conf_mask & distractor_keep
+        else:
+            print(
+                f"Warning: distractor_valid_mask size mismatch ({distractor_keep.shape[0]} vs {conf_mask.shape[0]})."
+            )
 
     if mask_black_bg:
         black_bg_mask = colors_rgb.sum(axis=1) >= 16
