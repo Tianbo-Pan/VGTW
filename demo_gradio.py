@@ -69,7 +69,7 @@ elif os.path.exists(legacy_ckpt_path):
     merged_ckpt_path = legacy_ckpt_path
 else:
     model_repo_id = os.getenv("MODEL_REPO_ID", "pan7386/vgtw-lora")
-    model_filename = os.getenv("MODEL_FILENAME", "model_lora_fp32.pt")
+    model_filename = os.getenv("MODEL_FILENAME", "vgtw_lora_fp32.pt")
     print(f"Local checkpoint not found. Downloading from {model_repo_id}/{model_filename}...")
     merged_ckpt_path = hf_hub_download(repo_id=model_repo_id, filename=model_filename)
 
