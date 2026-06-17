@@ -9,7 +9,14 @@
 <a href="./LICENSE.txt"><img src="https://img.shields.io/badge/License-CC_BY--NC_4.0-lightgrey" alt="License"></a>
 
 <p>
-  <span class="author"><a href="https://github.com/Tianbo-Pan">Tianbo Pan</a></span>
+  <span class="author">Tianbo Pan<sup>1</sup></span>,
+  <span class="author">Xingyi Yang<sup>1</sup></span>,
+  <span class="author">Shizun Wang<sup>1</sup></span>,
+  <span class="author">Xinchao Wang<sup>1</sup></span>
+</p>
+
+<p>
+  <sup>1</sup>National University of Singapore
 </p>
 
 <strong>Distractor-free 3D reconstruction from unconstrained image collections.</strong>
