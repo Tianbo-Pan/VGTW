@@ -10,13 +10,14 @@
 
 <p>
   <span class="author">Tianbo Pan<sup>1</sup></span>,
-  <span class="author">Xingyi Yang<sup>1</sup></span>,
+  <span class="author">Xingyi Yang<sup>2</sup></span>,
   <span class="author">Shizun Wang<sup>1</sup></span>,
   <span class="author">Xinchao Wang<sup>1</sup></span>
 </p>
 
 <p>
-  <sup>1</sup>National University of Singapore
+  <sup>1</sup>National University of Singapore<br>
+  <sup>2</sup>Hong Kong Polytechnic University
 </p>
 
 <strong>Distractor-free 3D reconstruction from unconstrained image collections.</strong>
